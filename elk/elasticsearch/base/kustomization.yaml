@@ -1,0 +1,4 @@
+namespace: elk
+resources:
+  - es-sts.yaml
+  - es-svc.yaml

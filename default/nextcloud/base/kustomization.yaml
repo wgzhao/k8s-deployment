@@ -1,0 +1,5 @@
+namespace: default
+resources:
+  - nextcloud-deploy.yaml
+  - nextcloud-svc.yaml
+  - nextcloud-ingress.yaml

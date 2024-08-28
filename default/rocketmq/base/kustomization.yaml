@@ -1,0 +1,14 @@
+resources:
+  - dashboard.yaml
+  - mqnamesrv.yaml
+  - mqbroker.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: servercmd
+    files:
+      - runbroker.sh
+      - runserver.sh
+      - broker.conf
+generatorOptions:
+  disableNameSuffixHash: true

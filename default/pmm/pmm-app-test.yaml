@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pmm
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: default/pmm/overlays/test
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

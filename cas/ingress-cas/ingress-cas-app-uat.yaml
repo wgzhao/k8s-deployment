@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-sso-uat
+  namespace: argocd
+spec:
+  destination:
+    namespace: sso-uat
+    server: https://kubernetes.default.svc
+  project: sso
+  source:
+    path: sso/ingress-sso/overlays/uat
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

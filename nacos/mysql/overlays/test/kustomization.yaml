@@ -1,0 +1,18 @@
+namespace: nacos-test
+resources:
+  - service.yaml
+  - stateful.yaml
+  - configmap.yaml
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/limits/memory
+      value: "8Gi"
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/requests/memory
+      value: "8Gi"
+  target:
+    kind: StatefulSet
+    name: mysql-nacos
+

@@ -1,0 +1,18 @@
+namespace: sso-dev
+resources:
+  - ../../base
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: dev
+    target:
+      kind: Deployment
+      name: cas-server
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: sso/cas-server
+  newTag: test

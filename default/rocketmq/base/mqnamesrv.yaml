@@ -1,0 +1,49 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: mqnamesrv
+  labels:
+    app: rocketmq
+spec:
+  serviceName: mqnamesrv-headless
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mqnamesrv
+  template:
+    metadata:
+      labels:
+        app: mqnamesrv
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: mqnamesrv
+          image: apache/rocketmq:4.9.3
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - mqnamesrv
+          ports:
+            - containerPort: 9876
+              protocol: TCP
+          resources:
+            limits:
+              memory: "2G"
+            requests:
+              memory: "2G"
+          env:
+            - name: JAVA_OPT
+              value: '-server -XX:ParallelGCThreads=1 -Xms1200m -Xmx1200m -Xmn600m'
+          volumeMounts:
+            - name: servercmd-volume
+              mountPath: /home/rocketmq/rocketmq-4.9.3/bin/runserver.sh
+              subPath: runserver.sh
+      volumes:
+        - name: servercmd-volume
+          configMap:
+            name: servercmd
+            defaultMode: 0755
+            items:
+              - key: runserver.sh
+                path: runserver.sh

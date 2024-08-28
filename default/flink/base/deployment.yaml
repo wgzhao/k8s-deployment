@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: flink
+  name: flink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink
+  template:
+    metadata:
+      labels:
+        app: flink
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "5"
+      containers:
+      - image: apache/flink:1.3.6
+        name: flink
+        imagePullPolicy: Always
+        ports:
+        - name: service-port
+          containerPort: 8081
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "1Gi"
+          limits:
+            memory: "1Gi"
+        env:
+          - name: JAVA_TOOL_OPTIONS
+            value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Xms64M -Duser.timezone=Asia/Chongqing"
+          - name: TZ
+            value: Asia/Chongqing

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: zookeeper
+    app.kubernetes.io/name: zookeeper
+spec:
+  selector:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: zookeeper
+    app.kubernetes.io/name: zookeeper
+  # externalTrafficPolicy: Cluster
+  ports:
+    - port: 2181
+      name: tcp-client
+      targetPort: client
+    - port: 2888
+      name: tcp-follower
+      targetPort: follower
+    - port: 3888
+      name: tcp-election
+      targetPort: election
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-headless
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: zookeeper
+    app.kubernetes.io/name: zookeeper
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 2181
+      name: tcp-client
+      targetPort: client
+    - port: 2888
+      name: tcp-follower
+      targetPort: follower
+    - port: 3888
+      name: tcp-election
+      targetPort: election
+  selector:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: zookeeper
+    app.kubernetes.io/name: zookeeper

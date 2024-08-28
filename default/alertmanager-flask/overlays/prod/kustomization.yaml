@@ -1,0 +1,48 @@
+namespace: grp-arch
+resources:
+- ../../base
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SMS_URL
+        value: http://10.90.23.32:9090/sms/api/v1/smsSender
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: ENV
+        value: prod
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: WEIXIN_KEY
+        value: 75afe4ca-178e-4475-b485-b4bc4c118fcc
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: EMAIL
+        value: tec-notify@gushi.com
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: EMAIL_PASSWD
+        value: Xiaogp51@2023
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SMTP_URL
+        value: smtp.exmail.qq.com
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SMTP_PORT
+        value: "465"
+  target:
+    kind: Deployment
+    name: alertmanager-flask
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: grp-arch/alertmanager-flask
+  newTag: 1.11.0

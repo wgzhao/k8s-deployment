@@ -1,0 +1,5 @@
+namespace: jenkins
+resources:
+  - deployment.yaml
+  - service.yaml
+  - serviceAccount.yaml

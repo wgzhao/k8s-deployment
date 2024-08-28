@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${app}
+  namespace: argocd
+spec:
+  destination:
+    namespace: ${ns}
+    server: https://kubernetes.default.svc
+  project: ${project}
+  source:
+    path: ${project}/${app}/overlays/env
+    repoURL: https://gitlab.gp51.com/grp-arch/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

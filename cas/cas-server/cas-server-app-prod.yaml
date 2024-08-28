@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cas-server
+  namespace: argocd
+spec:
+  destination:
+    namespace: common
+    server: https://kubernetes.default.svc
+  project: common
+  source:
+    path: common/cas-server/overlays/prod
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

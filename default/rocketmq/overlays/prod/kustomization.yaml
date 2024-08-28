@@ -1,0 +1,34 @@
+resources:
+  - ../../base/
+  - mq-console-svc.yaml
+  - mq-ingress.yaml
+
+# change resources memory to 4G
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 4G
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 4G
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: '-server -Xms2G -Xmx2G -Xmn1G'
+    target:
+      kind: StatefulSet
+      name: mqnamesrv
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 6G
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 6G
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: '-server -Xms2G -Xmx2G -Xmn1G'
+    target:
+      kind: StatefulSet
+      name: broker
+

@@ -1,0 +1,17 @@
+namespace: default
+resources:
+  - rabbitmq-statefulset.yaml
+  - rabbitmq-svc.yaml
+  - rabbitmq-secret.yaml
+  - rabbitmq-external.yaml
+
+# configMapGenerator:
+#   - name: rabbitmq-config
+#     files:
+#       - rabbitmq.conf
+#       - enabled_plugin
+#   - name: rabbitmq-definitions
+#     files:
+#       - definitions.json
+# generatorOptions:
+#   disableNameSuffixHash: true

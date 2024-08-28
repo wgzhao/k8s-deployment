@@ -1,0 +1,5 @@
+namespace: zookeeper
+resources:
+  - configmap.yaml
+  - stateful.yaml
+  - service.yaml

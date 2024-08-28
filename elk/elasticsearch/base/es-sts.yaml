@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: es #container prefix name, es-0, es-1, ... etc
+spec:
+  serviceName: es-cluster # group name ,es-0.es-cluster
+  replicas: 3
+  selector:
+    matchLabels:
+      app: es # has to match .spec.template.metadata.labels
+  template:
+    metadata:
+      labels:
+        app: es # has to match .spec.selector.matchLabels
+    spec:
+      containers:
+      - name: elasticsearch
+        image: elasticsearch/elasticsearch:8.7.0
+        ports:
+        - containerPort: 9200
+          name: rest
+          protocol: TCP
+        - containerPort: 9300
+          name: inter-node
+          protocol: TCP
+        env:
+          - name: cluster.name
+            value: es-cluster
+          - name: node.name
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: discovery.seed_hosts
+            value: "es-0.es-cluster.elk.svc.cluster.local,es-1.es-cluster.elk.svc.cluster.local,es-2.es-cluster.elk.svc.cluster.local"
+          - name: cluster.initial_master_nodes # use pod name instead of FQDN
+            value: "es-0,es-1,es-2"
+          - name: xpack.security.enabled
+            value: "false"
+          - name: xpack.security.http.ssl.enabled
+            value: "false"
+          - name: xpack.security.transport.ssl.enabled
+            value: "false"
+          - name: ELASTIC_PASSWORD
+            value: "yB6Wq-fUprsTJ"
+          - name: LICENSE
+            value: "basic"
+          - name: ES_JAVA_OPTS
+            value: "-Xms2048m -Xmx2048m"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: TZ
+            value: Asia/Chongqing
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "3G"
+          limits:
+            memory: "3G"
+        volumeMounts:
+        - name: es-data
+          mountPath: /usr/share/elasticsearch/data
+          subPathExpr: $(POD_NAME)
+        - name: es-plugins
+          mountPath: /usr/share/elasticsearch/plugins
+          readOnly: true
+      initContainers:
+      - name: fix-permissions
+        image: library/busybox:1.28
+        command: 
+          - sh
+          - "-c"
+          - |
+            chown -R 1000:1000 /usr/share/elasticsearch/data
+            ulimit -n 65535
+        securityContext:
+          privileged: true
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        volumeMounts:
+        - name: es-data
+          mountPath: /usr/share/elasticsearch/data
+          subPathExpr: $(POD_NAME)
+      volumes:
+        - name: es-data
+          hostPath:
+            path: /opt/data/es-data 
+            type: DirectoryOrCreate
+        - name: es-plugins
+          hostPath:
+            path: /data/k8sdata/elk/es-plugins
+            type: Directory

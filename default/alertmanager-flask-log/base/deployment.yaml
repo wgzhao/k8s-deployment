@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: alertmanager-flask-log
+  name: alertmanager-flask-log
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager-flask-log
+  template:
+    metadata:
+      labels:
+        app: alertmanager-flask-log
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "5"
+      containers:
+      - image: grp-arch/alertmanager-flask:test
+        name: alertmanager-flask-log
+        imagePullPolicy: Always
+        ports:
+        - name: service-port
+          containerPort: 5000
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "512Mi"
+          limits:
+            memory: "512Mi"
+        env:
+          - name: JAVA_TOOL_OPTIONS
+            value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Xms64M -Duser.timezone=Asia/Chongqing"
+          - name: TZ
+            value: Asia/Chongqing
+          - name: WEIXIN_KEY
+            value: ca9e2525-5c04-470f-8d66-e7cafce69f2a
+          - name: PHONE
+            value: "15292289306,15974103570"

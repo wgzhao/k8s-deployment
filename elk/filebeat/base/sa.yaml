@@ -1,0 +1,7 @@
+# Source: filebeat/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat-filebeat
+  labels:
+    app: "filebeat-filebeat"

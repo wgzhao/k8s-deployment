@@ -1,0 +1,4 @@
+namespace: default
+resources:
+  - stateful.yaml
+  - service.yaml

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap
+  labels:
+    app: openldap
+spec:
+  type: NodePort
+  ports:
+    - name: tcp-ldap
+      port: 1389
+      targetPort: tcp-ldap
+      nodePort: 11389
+  selector:
+    app: openldap

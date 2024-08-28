@@ -1,0 +1,13 @@
+namespace: default
+resources:
+  - ../../base
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: prod
+    target:
+      kind: Deployment
+      name: nexus-iq-server

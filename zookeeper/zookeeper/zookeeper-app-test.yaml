@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zookeeper
+  namespace: argocd
+spec:
+  destination:
+    namespace: zookeeper-test
+    server: https://kubernetes.default.svc
+  project: zookeeper
+  source:
+    path: zookeeper/zookeeper/overlays/test
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

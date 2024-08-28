@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: onlyoffice-server
+  name: onlyoffice-server
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: onlyoffice-server
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: onlyoffice-server
+    spec:
+      containers:
+      - name: onlyoffice-server
+        image: onlyoffice/documentserver
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 2000m
+            memory: 4Gi
+        env:
+          - name: TZ
+            value: Asia/Chongqing
+          - name: DB_TYPE
+            value: mysql
+          - name: DB_HOST
+            value: mysql-nacos.nacos
+          - name: DB_PORT
+            value: "3306"
+          - name: DB_USER
+            value: onlyoffice
+          - name: DB_PWD
+            value: onlyoffice@123
+          - name: REDIS_SERVER_HOST
+            value: redis.account-cancellation
+          - name: REDIS_SERVER_PORT
+            value: "6379"
+          - name: JWT_ENABLED
+            value: "false"
+          - name: JWT_SECRET
+            value: z6sXfRO7hXvnPzqj4qltfPDiKp0TKxNv
+        volumeMounts:
+          - name: logs
+            mountPath: /var/log/onlyoffice
+          - name: data
+            mountPath: /var/www/onlyoffice/Data
+          - name: lib
+            mountPath: /var/lib/onlyoffice
+      volumes:
+        - name: logs
+          hostPath:
+            path: /data/k8sdata/default/onlyoffice/logs
+        - name: data
+          hostPath:
+            path: /data/k8sdata/default/onlyoffice/data
+        - name: lib
+          hostPath:
+            path: /data/k8sdata/default/onlyoffice/lib
+      restartPolicy: Always

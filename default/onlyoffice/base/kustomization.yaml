@@ -1,0 +1,5 @@
+namespace: jiandaoyun
+resources:
+  - onlyoffice-server-deploy.yaml
+  - onlyoffice-server-svc.yaml
+  - onlyoffice-ingress-ing.yaml

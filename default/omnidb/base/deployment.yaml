@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-omnidb
+  name: omnidb
+spec:
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-default-omnidb
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-default-omnidb
+    spec:
+      containers:
+      - name: omnidb
+        image: library/omnidb:3.0.3b
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        - containerPort: 25482
+          name: socket
+          protocol: TCP
+        resources:
+          limits:
+            memory: "1Gi"
+          requests:
+            memory: "1Gi"
+            cpu: "200m"
+        env:
+          - name: NLS_LANG
+            value: AMERICAN_AMERICA.AL32UTF8
+          - name: ORACLE_HOME
+            value: /usr/lib/instantclient
+          - name: LD_LIBRARY_PATH
+            value: /usr/lib/instantclient
+        volumeMounts:
+        - mountPath: /etc/omnidb
+          name: config
+      restartPolicy: Always
+      volumes:
+        - name: config
+          hostPath:
+            path: /data/k8sdata/default/omnidb

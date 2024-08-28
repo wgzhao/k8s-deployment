@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: data-query-ui
+  name: data-query-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-query-ui
+  template:
+    metadata:
+      labels:
+        app: data-query-ui
+        logging: 'true' 
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      containers:
+      - image: grp-arch/data-query-ui:test
+        name: data-query-ui
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c", "sed -i 's/index  index.html index.htm;/&\\n        try_files $uri $uri\\/ \\/index.html;/' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+        ports:
+        - name: service-port
+          containerPort: 80
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            memory: "512Mi"
+        env:
+          - name: TZ
+            value: Asia/Chongqing

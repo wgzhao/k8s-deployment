@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: omnidb-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    # 开启use-regex，启用path的正则匹配
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    # 定义域名
+    - host: omnidb.your-domain.com
+      http:
+        paths:
+        # 不同path转发到不同端口
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: omnidb
+                port:
+                  number: 8080

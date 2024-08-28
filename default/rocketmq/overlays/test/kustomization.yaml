@@ -1,0 +1,29 @@
+namespace: default-test
+resources:
+- dashboard.yaml
+- mqnamesrv.yaml
+- mqbroker.yaml
+- service.yaml
+- mq-console-svc.yaml
+- mq-ingress.yaml
+configMapGenerator:
+  - name: servercmd
+    files:
+      - runbroker.sh
+      - runserver.sh
+      - broker.conf
+generatorOptions:
+  disableNameSuffixHash: true
+
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/volumes/1/hostPath/path
+      value:  /data/k8sdata/rmq-test/logs
+    - op: replace
+      path: /spec/template/spec/volumes/2/hostPath/path
+      value:  /data/k8sdata/rmq-test/store
+  target:
+    kind: StatefulSet
+    name: broker

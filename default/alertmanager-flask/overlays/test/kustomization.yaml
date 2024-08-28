@@ -1,0 +1,28 @@
+namespace: grp-arch
+resources:
+- ../../base
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SMS_URL
+        value: http://10.90.70.11:38080/api/v1/smsSender
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: ENV
+        value: test
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: WEIXIN_KEY
+        value: a1dd37ad-e981-426b-a8d3-a46e4d84e14c
+  target:
+    kind: Deployment
+    name: alertmanager-flask
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: grp-arch/alertmanager-flask
+  newTag: test-395922e9

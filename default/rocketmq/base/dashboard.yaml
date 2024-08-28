@@ -1,0 +1,34 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: rocketmq-dashboard
+  labels:
+    app: rocketmq-dashboard
+    app.kubernetes.io/instance: rocketmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocketmq-dashboard
+  template:
+    metadata:
+      labels:
+        app: rocketmq-dashboard
+    spec:
+      containers:
+        - name: rocketmq-dashboard
+          image: apacherocketmq/rocketmq-dashboard:latest
+          imagePullPolicy: IfNotPresent
+          # ports:
+          #   - containerPort: 8443
+          #     name: dashboard-port
+          #     protocol: TCP
+          env:
+            - name: JAVA_OPTS
+              value: -Drocketmq.namesrv.addr=mqnamesrv-0.mqnamesrv-headless:9876;mqnamesrv-1.mqnamesrv-headless:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+          resources:
+            limits:
+              memory: "4Gi"
+            requests:
+              memory: "2Gi"
+      restartPolicy: Always

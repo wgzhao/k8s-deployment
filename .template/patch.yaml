@@ -1,0 +1,10 @@
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: ${profile}
+    target:
+      kind: Deployment
+      name: ${project}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-external
+  labels:
+    app: rabbitmq-external
+spec:
+  ports:
+    - name: http-rabbitmq-external
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+      nodePort: 31672
+  selector:
+    app: rabbitmq
+  type: NodePort

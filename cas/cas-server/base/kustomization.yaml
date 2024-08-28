@@ -1,0 +1,4 @@
+namespace: common
+resources:
+  - deployment.yaml
+  - service.yaml

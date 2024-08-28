@@ -1,0 +1,10 @@
+namespace: elk
+resources:
+  - role.yaml
+  - sa.yaml
+  - daemonset.yaml
+  - service.yaml
+configMapGenerator:
+  - name: filebeat-filebeat-daemonset-config
+    files:
+      - filebeat.yml

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zookeeper
+  labels:
+    name: zookeeper
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: zookeeper
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  description: zookeeper
+  destinations:
+    - name: "*"
+      namespace: zookeeper
+      server: "*"
+  sourceRepos:
+    - "*"
+status: {}

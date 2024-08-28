@@ -1,0 +1,9 @@
+namespace: gitlab
+resources:
+  - gitlab-rc.yml
+  - gitlab-svc.yml
+  - postgresql-rc.yml
+  - postgresql-svc.yml
+  - redis-rc.yml
+  - redis-svc.yml
+  - ingress.yaml

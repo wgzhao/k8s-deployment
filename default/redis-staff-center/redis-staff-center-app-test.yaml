@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-staff-center-test
+  namespace: argocd
+spec:
+  destination:
+    namespace: staff-center-test
+    server: https://kubernetes.default.svc
+  project: staff-center
+  source:
+    path: staff-center/redis-staff-center/overlays/test
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

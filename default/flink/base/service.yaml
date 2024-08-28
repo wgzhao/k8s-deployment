@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flink
+  name: flink
+spec:
+  ports:
+  - name: http
+    port: 8081
+    protocol: TCP
+  selector:
+    app: flink
+  type: ClusterIP

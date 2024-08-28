@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+      - name: mysql-init
+        image: busybox:1.28
+        command: ['sh', '-c', 'chown -R 999:999 /var/lib/mysql /var/run/mysqld/']
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql
+        - name: mysql-run
+          mountPath: /var/run/mysqld
+      containers:
+        - name: mysql
+          image: library/percona:5.7
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "gp51@2022"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+            - name: TZ
+              value: Asia/Chongqing
+            - name: MYSQL_DATABASE
+              value: "data_query"
+            - name: MYSQL_USER
+              value: "dbquery"
+            - name: MYSQL_PASSWORD
+              value: "9P5V1n3LQC3p"
+            - name: LD_PRELOAD
+              value: /usr/lib64/libjemalloc.so.1
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              memory: "5Gi"
+          volumeMounts:
+            - mountPath: /etc/my.cnf.d
+              name: conf
+            - mountPath: /var/lib/mysql
+              name: datadir
+            - mountPath: /var/run/mysqld
+              name: mysql-run
+      volumes:
+        - name: conf
+          configMap:
+            name: mysql
+        - name: datadir
+          hostPath:
+            path: /data/k8sdata/grp-arch-test/mysql
+        - name: mysql-run
+          emptyDir: {}     

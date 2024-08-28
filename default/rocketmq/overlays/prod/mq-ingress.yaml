@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  name: mq-ingress
+spec:
+  rules:
+  - host: mq-console.your-domain.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: rocketmq-dashboard
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix

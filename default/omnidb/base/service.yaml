@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: omnidb
+spec:
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: socket
+    port: 25482
+    protocol: TCP
+    targetPort: 25482
+  selector:
+    workload.user.cattle.io/workloadselector: apps.deployment-default-omnidb
+  sessionAffinity: None
+  type: ClusterIP

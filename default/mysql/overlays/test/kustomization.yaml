@@ -1,0 +1,6 @@
+
+namespace: grp-arch-test
+resources:
+  - configmap.yaml
+  - service.yaml
+  - stateful.yaml

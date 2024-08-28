@@ -1,0 +1,5 @@
+namespace: ${ns}
+resources:
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml

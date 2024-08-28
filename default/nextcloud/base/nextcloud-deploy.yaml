@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nextcloud-server
+  name: nextcloud-server
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: nextcloud-server
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nextcloud-server
+    spec:
+      containers:
+      - name: nextcloud-server
+        image: nextcloud
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 2000m
+            memory: 4Gi
+        env:
+          - name: TZ
+            value: Asia/Chongqing
+          - name: REDIS_HOST
+            value: redis.account-cancellation
+          - name: MYSQL_HOST
+            value: mysql-nacos.nacos
+          - name: MYSQL_DATABASE
+            value: nextcloud
+          - name: MYSQL_USER
+            value: nextcloud
+          - name: MYSQL_PASSWORD
+            value: nextcloud@123
+          - name: NEXTCLOUD_ADMIN_USER
+            value: nextcloud
+          - name: NEXTCLOUD_ADMIN_PASSWORD
+            value: admin@123
+          - name: NEXTCLOUD_TRUSTED_DOMAINS
+            value: your-domain.com
+        volumeMounts:
+          - name: html
+            mountPath: /var/www/html
+      volumes:
+        - name: html
+          hostPath:
+            path: /data/k8sdata/default/nextcloud/html
+      restartPolicy: Always

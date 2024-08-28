@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: library/kibana:8.7.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: "2000Mi"
+          limits:
+            cpu: 1000m
+            memory: "2000Mi"
+        env:
+          - name: ELASTICSEARCH_URL
+            value: http://es-cluster:9200 # The domain es-cluster will resolve to a list of IP addresses for the 3 Elasticsearch Pods. 
+        ports:
+        - containerPort: 5601

@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: data-query-ui
+  namespace: argocd
+spec:
+  destination:
+    namespace: grp-arch
+    server: https://kubernetes.default.svc
+  project: grp-arch
+  source:
+    path: grp-arch/data-query-ui/overlays/prod
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

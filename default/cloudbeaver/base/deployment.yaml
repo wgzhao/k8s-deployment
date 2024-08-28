@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cloudbeaver
+  name: cloudbeaver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudbeaver
+  template:
+    metadata:
+      labels:
+        app: cloudbeaver
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "5"
+      containers:
+      - image: dbeaver/cloudbeaver:latest
+        name: cloudbeaver
+        imagePullPolicy: Always
+        ports:
+        - name: service-port
+          containerPort: 8978
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "1Gi"
+          limits:
+            memory: "1Gi"
+        env:
+          - name: JAVA_TOOL_OPTIONS
+            value: " -XX:+UnlockExperimentalVMOptions -XX:MaxRAMFraction=1 -Xms64M -Duser.timezone=Asia/Chongqing"
+          - name: TZ
+            value: Asia/Chongqing
+        volumeMounts:
+          - name: workspace
+            mountPath: /opt/cloudbeaver/workspace
+      volumes:
+        - name: workspace
+          hostPath:
+            path: /data/k8sdata/default/cloudbeaver

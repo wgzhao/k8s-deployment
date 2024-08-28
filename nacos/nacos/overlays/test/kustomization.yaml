@@ -1,0 +1,5 @@
+namespace: nacos-test
+resources:
+  - configmap.yaml
+  - stateful.yaml
+  - service.yaml

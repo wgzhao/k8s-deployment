@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nexus-iq-server
+  name: nexus-iq-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus-iq-server
+  template:
+    metadata:
+      labels:
+        app: nexus-iq-server
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "5"
+      containers:
+      - image: sonatype/nexus-iq-server:latest
+        name: nexus-iq-server
+        imagePullPolicy: Always
+        ports:
+        - name: service-port
+          containerPort: 8070
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            memory: "4Gi"
+        env:
+          - name: JAVA_TOOL_OPTIONS
+            value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Xms64M -Duser.timezone=Asia/Chongqing"
+          - name: TZ
+            value: Asia/Chongqing

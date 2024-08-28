@@ -1,0 +1,8 @@
+namespace: grp-arch
+resources:
+- ../../base
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: grp-arch/data-query-ui
+  newTag: 1.17.0

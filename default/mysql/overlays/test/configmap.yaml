@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  server.cnf: |
+    # Apply this config only on the master.
+    [mysqld] 
+    innodb_buffer_pool_size = 4G
+    innodb_log_file_size    = 256M
+    innodb_log_files_in_group = 4
+    innodb_data_file_path = ibdata1:100M:autoextend
+    innodb_large_prefix = 1
+    innodb_file_per_table = 1
+    innodb_flush_log_at_trx_commit = 2
+    innodb_file_format  = BARRACUDA
+    innodb_temp_data_file_path=ibtmp1:20M:autoextend:max:4G
+    innodb_change_buffering=all
+    max_allowed_packet=1024M
+    default-storage-engine = InnoDB
+    sort_buffer_size = 32M
+    server-id        = 13308
+    log-bin          = mysql-bin
+    binlog_format    = row
+    max_connect_errors = 1000
+    max_connections = 1024
+    max_tmp_tables = 128
+    character-set-server = utf8
+    collation-server     = utf8_general_ci
+    table_open_cache = 16384
+    expire_logs_days = 5
+    lower_case_table_names = 1
+    connect_timeout = 600
+    wait_timeout = 600
+    interactive_timeout= 600
+    net_read_timeout = 600
+    net_write_timeout = 600
+    sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    sync_binlog = 20
+    innodb_io_capacity = 1000
+    slow_query_log = on
+    [mysqld_safe]
+    open-files-limit = 8192
+    # enable validate password and audit plugin
+    plugin-load-add=validate_password.so
+    plugin-load-add=audit_log.so
+    # password policy
+    validate-password=FORCE_PLUS_PERMANENT
+    validate_password_length=12
+    validate_password_policy=STRONG
+    # audit 
+    audit_log_policy = ALL
+    audit_log_strategy = ASYNCHRONOUS
+    audit_log_rotate_on_size = 100M
+    audit_log_rotations = 30
+    audit_log_buffer_size = 1048576
+    audit_log_format = CSV
+    audit_log_exclude_commands = 'select,show_databases,show_tables,show_keys,show_fields,show_status,commit'
+    # performance tuning
+    ## enable numa
+    innodb_numa_interleave = 1
+    ## thread pool
+    thread_handling=pool-of-threads
+    ## improvement for high concurrency I/O-bound
+    innodb_empty_free_list_algorithm=backoff
+    innodb_flush_method = O_DIRECT
+    skip-name-resolve
+    expire_logs_days = 5
+---

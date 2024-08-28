@@ -1,0 +1,62 @@
+{
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "rabbitmq"
+    }
+  ],
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    },
+    {
+      "name": "user",
+      "password_hash": "",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "user",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+  ],
+  "topic_permissions": [
+    {
+      "user": "user",
+      "vhost": "/",
+      "exchange": "",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "vhosts":[
+    { "name": "/" }
+  ],
+  "policies":[
+    {
+      "vhost": "/",
+      "name": "ha",
+      "pattern": "",
+      "definition":{
+        "ha-mode": "all",
+        "ha-sync-mode": "automatic",
+        "ha-sync-batch-size": 100
+      }
+    }
+  ]
+}

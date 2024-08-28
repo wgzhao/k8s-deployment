@@ -1,0 +1,11 @@
+namespace: staff-center-test
+resources:
+  - ../../base
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/volumes/1/hostPath/path
+      value:  /data/k8sdata/staff-center-test/redis
+  target:
+    kind: Deployment
+    name: redis

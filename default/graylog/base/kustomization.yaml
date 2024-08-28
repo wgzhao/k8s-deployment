@@ -1,0 +1,11 @@
+namespace: default
+resources:
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+
+configMapGenerator:
+  - name: graylog-config
+    files:
+      - log4j2.xml
+      - graylog.conf

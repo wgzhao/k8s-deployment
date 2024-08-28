@@ -1,0 +1,4 @@
+namespace: elk
+resources:
+  - deployment.yaml
+  - service.yaml

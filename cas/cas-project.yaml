@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: cas
+   labels:
+     name: cas
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: cas-test
+   labels:
+     name: cas-test
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: cas-test
+   labels:
+     name: cas-test
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cas
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: cas
+  destinations:
+  - name: '*'
+    namespace: cas
+    server: '*'
+  - name: '*'
+    namespace: cas-test
+    server: '*'
+  - name: '*'
+    namespace: cas-uat
+    server: '*'
+  sourceRepos:
+  - '*'
+status: {}

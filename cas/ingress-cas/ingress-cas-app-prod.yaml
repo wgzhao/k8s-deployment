@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-sso
+  namespace: argocd
+spec:
+  destination:
+    namespace: sso
+    server: https://kubernetes.default.svc
+  project: sso
+  source:
+    path: sso/ingress-sso/overlays/prod
+    repoURL: https://github.com/wgzhao/k8s-deployment.git
+    targetRevision: HEAD
+  syncPolicy: {}

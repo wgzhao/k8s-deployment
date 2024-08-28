@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graylog-deploy
+  labels:
+    service: graylog-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      service: graylog-deploy
+  template:
+    metadata:
+      labels:
+        service: graylog-deploy
+    spec:
+      containers:
+      - name: graylog3
+        image: graylog/graylog:4.3
+        imagePullPolicy: Always
+        ports:
+        - name: tcp
+          protocol: TCP
+          containerPort: 9000
+        - name: rpc
+          protocol: TCP
+          containerPort: 12201
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "2Gi"
+          limits:
+            memory: "2Gi"
+        env:
+          - name: TZ
+            value: Asia/Chongqing
+          - name: JAVA_OPTS
+            value: "-Xms1800m -Xmx1800m -XX:NewRatio=1 -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
+        volumeMounts:
+          - name: datadir
+            mountPath: /usr/share/graylog/data
+          - name: config
+            mountPath: /usr/share/graylog/data/config/graylog.conf
+            subPath: graylog.conf
+          - name: config
+            mountPath: /usr/share/graylog/data/config/log4j2.xml
+            subPath: log4j2.xml
+      volumes:
+        - name: config
+          configMap:
+            name: graylog-config
+            items:
+              - key: graylog.conf
+                path: graylog.conf
+              - key: log4j2.xml
+                path: log4j2.xml
+        - name: datadir
+          hostPath:
+            path: /data/k8sdata/default/graylog
+            type: DirectoryOrCreate

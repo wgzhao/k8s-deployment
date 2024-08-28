@@ -1,0 +1,27 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rocketmq-dashboard
+  labels:
+    app: rocketmq-dashboard
+    app.kubernetes.io/instance: rocketmq
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: rocketmq-dashboard
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mq-svc
+spec:
+  ports:
+  - port: 9876
+    protocol: TCP
+    targetPort: 9876
+  selector:
+    app: mqnamesrv

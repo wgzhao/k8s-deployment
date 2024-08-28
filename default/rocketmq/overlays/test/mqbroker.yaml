@@ -1,0 +1,83 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: broker
+  labels:
+    app.kubernetes.io/instance: rocketmq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: broker
+  serviceName: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: broker
+          image: apache/rocketmq:4.9.3
+          command: ["sh", "-c", "./mqbroker -c ../conf/broker.conf"]
+          ports:
+            - containerPort: 10909
+              protocol: TCP
+            - containerPort: 10911
+              protocol: TCP
+            - containerPort: 10912
+              protocol: TCP
+          env:
+            - name: JAVA_OPT
+              value: '-server -Xms1200m -Xmx1200m -Xmn500m'
+            - name: NAMESRV_ADDR
+              value: 'mqnamesrv-0.mqnamesrv-headless.default-test:9876;mqnamesrv-1.mqnamesrv-headless.default-test:9876'
+            - name: BROKER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: BROKER_ID
+              value: "0"
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+          volumeMounts:
+            - name: servercmd-volume
+              mountPath: /home/rocketmq/rocketmq-4.9.3/bin/runbroker.sh
+              subPath: runbroker.sh
+            - name: servercmd-volume
+              mountPath: /home/rocketmq/rocketmq-4.9.3/conf/broker.conf
+              subPath: broker.conf
+            - name: brokeroptlogs
+              mountPath: /home/rocketmq/logs
+              subPathExpr: $(POD_NAME)
+            - name: brokeroptstore
+              mountPath: /home/rocketmq/store
+              subPathExpr: $(POD_NAME)
+          imagePullPolicy: IfNotPresent
+      volumes:
+        - name: servercmd-volume
+          configMap:
+            name: servercmd
+            defaultMode: 0777
+            items:
+              - key: runbroker.sh
+                path: runbroker.sh
+              - key: broker.conf
+                path: broker.conf
+        - name: brokeroptlogs
+          hostPath:
+            path: /data/k8sdata/rmq/logs
+            type: ""
+        - name: brokeroptstore
+          hostPath:
+            path: /data/k8sdata/rmq/store
+            type: ""
+          

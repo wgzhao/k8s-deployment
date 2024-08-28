@@ -1,0 +1,23 @@
+namespace: common-uat
+resources:
+- ../../base
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SPRING_PROFILES_INCLUDE
+        value: uat
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: WECOM_LOGINFORM_ENABLED
+        value: 'true'
+  target:
+    kind: Deployment
+    name: cas-server
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: common/cas-server
+  newTag: uat-17790e9b

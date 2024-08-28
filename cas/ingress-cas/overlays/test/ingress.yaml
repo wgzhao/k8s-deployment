@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-cas
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+spec:
+  rules:
+    # 定义域名
+    - host: testsso.your-domain.com
+      http:
+        paths:
+        # 不同path转发到不同端口
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: cas-server
+                port:
+                  number: 8080

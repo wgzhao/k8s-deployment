@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: xxl-job
+  labels:
+    app: xxl-job
+spec:
+  ports:
+  - name: xxl-job
+    port: 8080
+    targetPort: 8080
+    nodePort: 48080
+    protocol: TCP
+  selector:
+    app: xxl-job
+  type: NodePort

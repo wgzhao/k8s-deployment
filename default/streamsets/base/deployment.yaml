@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: streamsets
+  name: streamsets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamsets
+  template:
+    metadata:
+      labels:
+        app: streamsets
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "5"
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command: ['sh', '-c', 'chown -R 20159:20159 /data && chmod 755 /etc/sdc && chown -R 20159:0 /etc/sdc ']
+        volumeMounts:
+        - name: config
+          mountPath: /etc/sdc
+        - name: data
+          mountPath: /data       
+      containers:
+      - image: streamsets/datacollector:3.18.0
+        name: streamsets
+        imagePullPolicy: Always
+        ports:
+        - name: service-port
+          containerPort: 18630
+        startupProbe:
+          tcpSocket:
+            port: service-port
+          failureThreshold: 20
+          periodSeconds: 5
+          initialDelaySeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: service-port
+          initialDelaySeconds: 15
+          periodSeconds: 3
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "2048Mi"
+        volumeMounts:
+          - name: data
+            mountPath: /data
+          - name: config
+            mountPath: /etc/sdc
+          - name: localtime
+            mountPath: /etc/localtime
+            readOnly: true
+          - name: timezone
+            mountPath: /etc/timezone
+            readOnly: true
+      volumes:
+        - name: config
+          hostPath:
+            path: /data/k8sdata/grp-arch/streamsets/config
+        - name: data
+          hostPath:
+            path: /data/k8sdata/grp-arch/streamsets/data
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: timezone
+          hostPath:
+            path: /etc/timezone

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap
+  labels:
+    app: openldap
+spec:
+  selector:
+    matchLabels:
+      app: openldap
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openldap
+    spec:
+      containers:
+        - name: openldap
+          image: bitnami/openldap:latest
+          imagePullPolicy: "Always"
+          env:
+            - name: LDAP_ADMIN_USERNAME
+              value: "admin"
+            - name: LDAP_ADMIN_PASSWORD
+              value: "adminpassword"
+            - name: LDAP_USERS
+              value: "user1"
+            - name: LDAP_PASSWORDS
+              value: "password1"
+            - name: LDAP_CONFIG_ADMIN_ENABLED
+              value: "yes"
+            - name: LDAP_ROOT
+              value: "dc=gp51,dc=com"
+            - name: LDAP_ALLOW_ANON_BINDING
+              value: "no"
+          resources:
+            limits:
+              cpu: "3"
+              memory: 1Gi
+            requests:
+              memory: 1Gi
+              cpu: 500m
+          ports:
+            - name: tcp-ldap
+              containerPort: 1389

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-nacos
+spec:
+  selector:
+    matchLabels:
+      app: mysql-nacos
+  serviceName: mysql-nacos
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-nacos
+    spec:
+      containers:
+        - name: mysql
+          image: library/mysql:5.7
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "ish7shu@Th5"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
+            - name: MYSQL_DATABASE
+              value: "nacos_config"
+            - name: MYSQL_USER
+              value: "nacos"
+            - name: MYSQL_PASSWORD
+              value: "9P5V1n3LQC3p"
+            - name: TZ
+              value: Asia/Chongqing
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512M"
+            limits:
+              memory: "800M"
+          volumeMounts:
+            - mountPath: /etc/mysql/conf.d
+              name: conf
+            - mountPath: /var/lib/mysql
+              name: datadir
+      volumes:
+        - name: conf
+          configMap:
+            name: mysql-nacos
+        - name: datadir
+          hostPath:
+            path: /data/k8sdata/nacos/mysql-nacos

@@ -1,0 +1,28 @@
+namespace:
+  grp-arch
+  # - op: replace
+  #   path: /spec/replicas
+  #   value: 2
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SPRING_PROFILES_ACTIVE
+          value: prod
+      # - op: replace
+      #   path: /spec/replicas
+      #   value: 2
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "1024Mi"
+    target:
+      kind: Deployment
+      name: data-query
+resources:
+  - ../../base/
+images:
+  - name: grp-arch/data-query
+    newTag: 2.16.0
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

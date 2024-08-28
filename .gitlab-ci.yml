@@ -1,0 +1,68 @@
+stages:
+  # - test
+  - prod
+  - notify
+
+# test:
+#   stage: test
+#   script:
+#     - bash deploy.sh
+#   only:
+#     changes:
+#       - "*/*-project.yaml"
+#       - "*/*/*-app-*.yaml"
+#   tags:
+#     - shell
+
+
+prod:
+  stage: prod
+  script:
+    - bash deploy.sh
+  only:
+    changes:
+      - "*/*-project.yaml"
+      - "*/*/*-app-*.yaml"
+  tags:
+    - shell
+  # when: manual
+
+
+failure:
+  stage: notify
+  script: |
+    . /etc/profile.d/util.sh
+    SMS_RECEIVERS="15974103570,15292289306"
+    content="项目${CI_PROJECT_NAME} 发布, 点击 [这里](${CI_PIPELINE_URL}) 查看详情"
+    send_wechat "<font color='warning'>【项目发布失败】</font>\n ${content}" markdown
+    send_sms ${SMS_RECEIVERS} "【失败】${content}"
+  when: on_failure
+  tags:
+    - notify
+  only:
+    changes:
+      - "*/*-project.yaml"
+      - "*/*/*-app-*.yaml"
+
+success:
+  stage: notify
+  script: |
+    . /etc/profile.d/util.sh
+    SMS_RECEIVERS="15974103570,15292289306"
+    content="项目${CI_PROJECT_NAME} 发布成功 "
+    if [ -z "$TAG1" ];then
+      # test env sms disabled
+      send_wechat "<font color='info'>【项目发布成功】</font>\n ${content}" markdown
+      exit 0
+    fi
+    content="项目 ${CI_PROJECT_NAME} 发布成功"
+    send_wechat "<font color='info'>【项目发布成功】</font>\n ${content}" markdown
+    send_sms ${SMS_RECEIVERS} "【成功】${content}"
+  when: on_success
+  needs: ["prod"]
+  tags:
+    - notify
+  only:
+    changes:
+      - "*/*-project.yaml"
+      - "*/*/*-app-*.yaml"

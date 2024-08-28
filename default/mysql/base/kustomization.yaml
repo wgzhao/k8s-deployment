@@ -1,0 +1,5 @@
+namespace: default
+resources:
+  - configmap.yaml
+  - service.yaml
+  - stateful.yaml

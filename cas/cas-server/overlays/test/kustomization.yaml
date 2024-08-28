@@ -1,0 +1,18 @@
+namespace: common-test
+resources:
+- ../../base
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: SPRING_PROFILES_INCLUDE
+        value: test
+  target:
+    kind: Deployment
+    name: cas-server
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: common/cas-server
+  newTag: test-1a343890
